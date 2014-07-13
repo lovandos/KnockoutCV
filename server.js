@@ -1,12 +1,10 @@
 var express = require('express');
+var mongoose = require('mongoose');
 var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
 
@@ -22,8 +20,17 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+
+app.get('/partials/:partialPath', function(req, res) {
+    res.render('partials/' + req.params.partialPath);
+});
+
+/* GET home page. */
+app.get('/', function(req, res) {
+    res.render('index', { title: 'Express' });
+});
+
+
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -58,3 +65,9 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+mongoose.connect('mongodb://localhost/knockout_cv');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error...'));
+db.once('open', function callback(){
+    console.log('knockout_cs db opened');
+});
